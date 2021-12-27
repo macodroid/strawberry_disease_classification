@@ -3,19 +3,12 @@ import cv2 as cv
 import json
 
 
-# get just one bounding box
-def get_points(json_file_path):
-    with open(json_file_path) as handle:
-        dictdump = json.loads(handle.read())
-    return np.asarray(dictdump['shapes'][0]['points'], np.int32)
-
-
 # get all bounding boxes
 def get_all_points(json_file_path):
     points = []
     with open(json_file_path) as handle:
-        dictdump = json.loads(handle.read())
-    boxes = dictdump['shapes']
+        dump_json = json.loads(handle.read())
+    boxes = dump_json['shapes']
     for box_points in boxes:
         points.append(box_points['points'])
     return points

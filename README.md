@@ -5,7 +5,8 @@ Dataset can be found https://www.kaggle.com/usmanafzaal/strawberry-disease-detec
 - [ ] train CNN without annotated picture
     - [ ] learning more about pre-processing images
       - [X] load dataset
-      - [ ] consider creating csv file for dataset
       - [X] create classes for individual disease (angular leafspot 1, anthracnose fruit rot 2, etc.)
-      - [ ] shuffle dataset
-      - [ ] normalize images
+      - [] shuffle dataset
+      - [ ] normalize images ???
+      - [ ] read more about CNN and how to train
+- [X] consider creating csv file for dataset

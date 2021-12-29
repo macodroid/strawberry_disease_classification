@@ -132,3 +132,6 @@ archive.zip
 data/
 
 .idea/
+
+dataset/
+saved_data_np

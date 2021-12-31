@@ -15,11 +15,16 @@ from sklearn import preprocessing
 
 def separate_files(data_type):
     json_files = []
-    image_files = os.listdir(f'data/{data_type}/')  # -> return content of directory all files
-    for file in image_files:
-        if '.json' in file:
+    image_files = []
+    data_in_dir = os.listdir(f'data/{data_type}')  # -> return content of directory all files
+    # I don't know why but when running on Windows os.lastdir return content of directory in
+    # same order as in actual directory but running on linux it returns in files in random position. WHY Linux ???
+    data_in_dir.sort()
+    for file in data_in_dir:
+        if ".json" in file:
             json_files.append(file)
-            image_files.remove(file)
+        else:
+            image_files.append(file)
     return image_files, json_files
 
 

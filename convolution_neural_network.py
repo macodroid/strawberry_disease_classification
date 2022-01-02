@@ -21,8 +21,8 @@ test_accuracy = 0
 file_name = 'cnn_run_1.txt'
 
 # Setting hyperparameters
-learning_rate = 0.0001
-batch_size = 64
+learning_rate = 0.001
+batch_size = 32
 num_epoch = 50
 
 # tensor([0.3778, 0.4980, 0.1993]) -> mean
@@ -30,7 +30,7 @@ num_epoch = 50
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
-     transforms.Normalize([0.3778, 0.4980, 0.1993], [0.1722, 0.1499, 0.1384])])
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 # Loading dateset (loading training, testing and validating sets)
 train_set = StrawberryDataset(csv_file='dataset/data_train.csv', image_dir='dataset/train',

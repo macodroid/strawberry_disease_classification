@@ -1,16 +1,15 @@
 import os
 import cv2
 import numpy as np
-import json
-
-from numpy.core.fromnumeric import resize
+import shutil
 
 from bouding_box import get_all_points
+from data_utils import separate_files
 
 
-def extract_infected_area(image_name, json_file):
-    image = cv2.imread(image_name)
-    points = get_all_points(json_file)
+def extract_infected_area(image_name, json_file, path_to_file):
+    image = cv2.imread(f'{path_to_file}/{image_name}')
+    points = get_all_points(f'{path_to_file}/{json_file}')
 
     mask = np.zeros((image.shape[0], image.shape[1]))
     for p in points:
@@ -23,30 +22,25 @@ def extract_infected_area(image_name, json_file):
     return out
 
 
-def main(image_name, image_json):
+def main():
+    raw_data = 'data'
+    root_dir = 'extract_dataset'
+    data_type = ['train', 'test', 'val']
+    try:
+        os.mkdir(root_dir)
+    except:
+        print('directory exists')
+        shutil.rmtree(root_dir)
+        os.mkdir(root_dir)
 
-    # try:
-    #     os.mkdir('extract_feature')
-    # except:
-    #     print('directory exists')
-    #     os.rmdir('extract_feature')
-    #     os.mkdir('extract_feature')
-
-    out = extract_infected_area(image_name, image_json)
-    dim = (235,235)
-    resized_out = cv2.resize(out, dim, interpolation = cv2.INTER_AREA)
-    cv2.imshow('Extracted Image', out)
-    cv2.imshow('Resized Image', resized_out)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    cv2.imwrite('out.jpg',resized_out)
-    
-    # resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+    for d_type in data_type:
+        path_to_save = f'{root_dir}/{d_type}'
+        path_to_file = f'{raw_data}/{d_type}'
+        os.mkdir(path_to_save)
+        image_name, json_name = separate_files(d_type)
+        for i in range(len(image_name)):
+            extracted_disease_img = extract_infected_area(image_name[i], json_name[i], path_to_file)
+            cv2.imwrite(f'{path_to_save}/extract_{image_name[i]}', extracted_disease_img)
 
 
-# img = 'data/train/anthracnose_fruit_rot66.jpg'
-# img_json = 'data/train/anthracnose_fruit_rot66.json'
-img = 'data/train/gray_mold119.jpg'
-img_json = 'data/train/gray_mold119.json'
-
-main(img, img_json)
+main()

@@ -13,10 +13,10 @@ import shutil
 from sklearn import preprocessing
 
 
-def separate_files(data_type):
+def separate_files(path, data_type):
     json_files = []
     image_files = []
-    data_in_dir = os.listdir(f'data/{data_type}')  # -> return content of directory all files
+    data_in_dir = os.listdir(f'{path}/{data_type}')  # -> return content of directory all files
     # I don't know why but when running on Windows os.lastdir return content of directory in
     # same order as in actual directory but running on linux it returns in files in random position. WHY Linux ???
     data_in_dir.sort()
@@ -69,11 +69,23 @@ def get_data(data_type):
     return np.reshape(np.asarray(_images), (-1, 1)), np.reshape(np.asarray(target), (-1, 1))
 
 
+# if __name__ == '__main__':
+#     types_of_data = ['train', 'test', 'val']
+#     os.mkdir('dataset')
+#     for type_of_data in types_of_data:
+#         images, labels = get_data(type_of_data)
+#         separate_images(images, type_of_data)
+#         data_arr = np.append(images, labels, axis=1)
+#         np.savetxt(f'dataset/data_{type_of_data}.csv', data_arr, delimiter=',', fmt='%s')
 if __name__ == '__main__':
     types_of_data = ['train', 'test', 'val']
-    os.mkdir('dataset')
-    for type_of_data in types_of_data:
-        images, labels = get_data(type_of_data)
-        separate_images(images, type_of_data)
-        data_arr = np.append(images, labels, axis=1)
-        np.savetxt(f'dataset/data_{type_of_data}.csv', data_arr, delimiter=',', fmt='%s')
+    path_to_json = 'data'
+    path_to_images = 'extract_dataset'
+    for d_type in types_of_data:
+        images, labels = separate_files(path_to_json, d_type)
+        extract_images, dont_care = separate_files(path_to_images, d_type)
+        target = categorize_target(load_target(labels, d_type))
+        extract_images = np.reshape(np.asarray(extract_images), (-1, 1))
+        target = np.reshape(np.asarray(target), (-1, 1))
+        data_arr = np.append(extract_images, target, axis=1)
+        np.savetxt(f'{path_to_images}/extracted_data_{d_type}.csv', data_arr, delimiter=',', fmt='%s')

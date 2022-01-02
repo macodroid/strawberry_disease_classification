@@ -33,11 +33,11 @@ transform = transforms.Compose(
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 # Loading dateset (loading training, testing and validating sets)
-train_set = StrawberryDataset(csv_file='dataset/data_train.csv', image_dir='dataset/train',
+train_set = StrawberryDataset(csv_file='extract_dataset/extracted_data_train.csv', image_dir='extract_dataset/train',
                               transform=transform)
-test_set = StrawberryDataset(csv_file='dataset/data_test.csv', image_dir='dataset/test',
+test_set = StrawberryDataset(csv_file='extract_dataset/extracted_data_test.csv', image_dir='extract_dataset/test',
                              transform=transform)
-valid_set = StrawberryDataset(csv_file='dataset/data_val.csv', image_dir='dataset/val',
+valid_set = StrawberryDataset(csv_file='extract_dataset/extracted_data_val.csv', image_dir='extract_dataset/val',
                               transform=transform)
 
 train_loader = DataLoader(dataset=train_set, batch_size=batch_size, shuffle=True)

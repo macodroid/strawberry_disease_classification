@@ -1,4 +1,5 @@
 import torch
+import matplotlib.pyplot as plt
 from torch import nn
 from torchvision import transforms
 
@@ -9,16 +10,20 @@ from torch.utils.data import DataLoader
 
 # Setting the device for using the CUDA if is possible
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(device)
+torch.cuda.empty_cache()
 
 # keeping-track-of-losses
 train_losses = []
 valid_losses = []
+test_accuracy = 0
+
+file_name = 'cnn_run_1.txt'
 
 # Setting hyperparameters
-number_of_classes = 7
-learning_rate = 0.001
-batch_size = 32
-num_epoch = 10
+learning_rate = 0.0001
+batch_size = 64
+num_epoch = 50
 
 # tensor([0.3778, 0.4980, 0.1993]) -> mean
 # tensor([0.1722, 0.1499, 0.1384]) -> std
@@ -43,7 +48,7 @@ model = ConvNet().to(device)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
-
+file = open(file_name, 'a')
 n_total_steps = len(train_loader)
 for epoch in range(num_epoch):
     train_loss = 0.0
@@ -60,7 +65,6 @@ for epoch in range(num_epoch):
         optimizer.step()
 
         train_loss += loss.item() * images.size(0)
-        #print(f'Epoch [{epoch + 1}/{num_epoch}], Step [{i + 1}/{n_total_steps}], Loss: {loss.item():.4f}')
 
     model.eval()
     for image, label in valid_loader:
@@ -79,3 +83,29 @@ for epoch in range(num_epoch):
     # print-training/validation-statistics
     print('Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}'.format(
         epoch, train_loss, valid_loss))
+    file.write('Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}'.format(
+        epoch, train_loss, valid_loss))
+
+# test-the-model
+model.eval()  # it-disables-dropout
+with torch.no_grad():
+    correct = 0
+    total = 0
+    for images, labels in test_loader:
+        images = images.to(device)
+        labels = labels.to(device)
+        outputs = model(images)
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+    print('Test Accuracy of the model: {} %'.format(100 * correct / total))
+    file.write('Test Accuracy of the model: {} % \n'.format(100 * correct / total))
+
+# plotting the training and validation loss
+plt.plot(train_losses, label='Training loss')
+plt.plot(valid_losses, label='Validation loss')
+plt.legend()
+plt.show()
+file.close()
+
